@@ -1,0 +1,168 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Kasuwa pour les commerçantes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700&family=Figtree:wght@400;500;600;700&display=swap">
+<style>
+/* Mise en page : une colonne de lecture étroite, titre fort en tête, motif losange en séparateur, puis sections empilées (bénéfices, étapes, tarifs, questions, appel final). */
+:root {
+  --display: 'Bricolage Grotesque', 'Trebuchet MS', system-ui, sans-serif;
+  --body: 'Figtree', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --bg: #F1F2F8;
+  --surface: #FFFFFF;
+  --ink: #161B36;
+  --muted: #59607F;
+  --line: #DCDFEC;
+  --accent: #2B3B9E;
+  --on-accent: #FFFFFF;
+  --accent-soft: #E2E6FA;
+  --sun: #A85F00;
+  --good: #1B7A4B;
+  --good-soft: #DDF1E6;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0E1125; --surface: #171B38; --ink: #ECEFFB; --muted: #9EA6CC; --line: #2A3062;
+    --accent: #9AA8FF; --on-accent: #0E1125; --accent-soft: #252C6B;
+    --sun: #F0B050; --good: #6FD3A0; --good-soft: #143827;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0E1125; --surface: #171B38; --ink: #ECEFFB; --muted: #9EA6CC; --line: #2A3062;
+  --accent: #9AA8FF; --on-accent: #0E1125; --accent-soft: #252C6B;
+  --sun: #F0B050; --good: #6FD3A0; --good-soft: #143827;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font-family: var(--body); font-size: 16px; line-height: 1.55; }
+h1, h2, h3 { font-family: var(--display); margin: 0; text-wrap: balance; letter-spacing: -0.015em; line-height: 1.12; }
+p { margin: 0; }
+ul, ol { list-style: none; margin: 0; padding: 0; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.wrap { max-width: 44rem; margin-inline: auto; padding-inline: 16px; padding-block: 20px 56px; display: grid; gap: 48px; }
+.brand { display: flex; align-items: center; gap: 8px; }
+.brand svg { width: 26px; height: 26px; }
+.brand span { font-family: var(--display); font-weight: 700; font-size: 22px; letter-spacing: -0.02em; }
+
+.hero { display: grid; gap: 18px; }
+.hero h1 { font-size: clamp(2.1rem, 8vw, 3.4rem); }
+.hero .lead { font-size: 18px; color: var(--muted); max-width: 36rem; }
+.motif { width: 100%; height: 20px; display: block; }
+
+.msg { display: grid; gap: 6px; max-width: 26rem; }
+.msg .cap { font-size: 13px; color: var(--muted); }
+.bubble { background: var(--good-soft); border-radius: 16px 16px 16px 4px; padding: 12px 14px; font-size: 15px; }
+.bubble b { font-weight: 700; }
+
+h2 { font-size: 26px; }
+.sec { display: grid; gap: 18px; }
+.sec > .sub { color: var(--muted); max-width: 36rem; }
+
+.gains li { padding-block: 16px; border-top: 1px solid var(--line); display: grid; gap: 4px; }
+.gains li:last-child { border-bottom: 1px solid var(--line); }
+.gains h3 { font-size: 19px; }
+.gains p { color: var(--muted); }
+
+.steps { display: grid; gap: 4px; counter-reset: s; }
+.steps li { counter-increment: s; display: grid; grid-template-columns: 2.5rem 1fr; gap: 12px; align-items: baseline; padding-block: 12px; border-top: 1px solid var(--line); }
+.steps li::before { content: counter(s); font-family: var(--display); font-weight: 700; font-size: 28px; color: var(--accent); line-height: 1; }
+.steps li:last-child { border-bottom: 1px solid var(--line); }
+
+.tiers { display: grid; grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr)); gap: 12px; }
+.tier { background: var(--surface); border: 1.5px solid var(--line); border-radius: 14px; padding: 18px; display: grid; gap: 6px; align-content: start; min-width: 0; }
+.tier.best { background: var(--accent-soft); border-color: var(--accent); }
+.tier .lab { font-weight: 600; }
+.tier .price { font-family: var(--display); font-weight: 700; font-size: 32px; font-variant-numeric: tabular-nums; line-height: 1.1; overflow-wrap: anywhere; }
+.tier .per { color: var(--muted); }
+.tier .ofr { font-weight: 700; color: var(--good); font-size: 14px; }
+.trial { background: var(--surface); border: 1.5px dashed var(--accent); border-radius: 14px; padding: 14px 16px; font-weight: 600; }
+.note { color: var(--muted); font-size: 14px; }
+
+.faq { display: grid; }
+.faq details { border-top: 1px solid var(--line); padding-block: 14px; }
+.faq details:last-child { border-bottom: 1px solid var(--line); }
+.faq summary { cursor: pointer; font-weight: 600; list-style: none; display: flex; justify-content: space-between; gap: 12px; }
+.faq summary::-webkit-details-marker { display: none; }
+.faq summary::after { content: '+'; color: var(--accent); font-size: 22px; line-height: 1; }
+.faq details[open] summary::after { content: '−'; }
+.faq p { color: var(--muted); padding-top: 8px; max-width: 36rem; }
+
+.final { background: var(--accent); color: var(--on-accent); border-radius: 16px; padding: 28px 22px; display: grid; gap: 8px; }
+.final h2 { font-size: 28px; }
+</style>
+
+<main class="wrap">
+  <div class="brand">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 1.5l10.5 10.5L12 22.5 1.5 12z" style="fill:var(--accent)"/><path d="M12 6.5l5.5 5.5-5.5 5.5L6.5 12z" style="fill:var(--bg)"/><path d="M12 9.5l2.5 2.5-2.5 2.5L9.5 12z" style="fill:var(--sun)"/></svg>
+    <span>Kasuwa</span>
+  </div>
+
+  <section class="hero">
+    <h1>Vendez sur WhatsApp. Soyez trouvée par de nouveaux clients.</h1>
+    <p class="lead">Kasuwa réunit les commerçantes qui vendent sur WhatsApp. Un client cherche « gâteau », voit votre boutique, commande et paie par mobile money. Vous préparez, un livreur apporte la commande.</p>
+    <div class="msg">
+      <div class="bubble"><b>Nouvelle commande #1043.</b> 2 articles, 7 500 FCFA déjà payés par mobile money. Ouvrez Kasuwa pour l’accepter.</div>
+      <p class="cap">Le message que vous recevez sur WhatsApp à chaque commande.</p>
+    </div>
+    <svg class="motif" aria-hidden="true" focusable="false"><defs><pattern id="d" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M10 2l8 8-8 8-8-8z" style="fill:none;stroke:var(--accent);stroke-width:1.5"/></pattern></defs><rect width="100%" height="20" fill="url(#d)"/></svg>
+  </section>
+
+  <section class="sec">
+    <h2>Ce que vous gagnez</h2>
+    <ul class="gains">
+      <li><h3>Des clients qui vous trouvent</h3><p>Quand quelqu’un cherche ce que vous vendez, votre boutique apparaît avec vos produits et vos prix.</p></li>
+      <li><h3>Payée avant de préparer</h3><p>Le client paie par mobile money au moment de commander. Vous préparez des commandes déjà réglées.</p></li>
+      <li><h3>Un livreur vient chercher</h3><p>Vous ne courez plus après les livraisons. Un livreur récupère la commande chez vous et l’apporte au client.</p></li>
+    </ul>
+  </section>
+
+  <section class="sec">
+    <h2>Comment ça se passe</h2>
+    <ol class="steps">
+      <li>Le client cherche un produit et choisit une commerçante.</li>
+      <li>Vous recevez un message WhatsApp et vous acceptez la commande.</li>
+      <li>Vous préparez, puis vous marquez la commande prête.</li>
+      <li>Un livreur la récupère et la livre au client.</li>
+    </ol>
+  </section>
+
+  <section class="sec">
+    <h2>Un abonnement simple</h2>
+    <p class="trial">Les 30 premiers jours sont gratuits.</p>
+    <div class="tiers">
+      <div class="tier">
+        <span class="lab">Mensuel</span>
+        <span class="price">3 000 FCFA</span>
+        <span class="per">par mois</span>
+        <span class="ofr">Sans engagement</span>
+      </div>
+      <div class="tier best">
+        <span class="lab">Annuel</span>
+        <span class="price">30 000 FCFA</span>
+        <span class="per">par an</span>
+        <span class="ofr">2 mois offerts, soit 2 500 FCFA par mois</span>
+      </div>
+    </div>
+    <p class="note">Vous payez l’abonnement par mobile money, avec l’opérateur de votre choix.</p>
+  </section>
+
+  <section class="sec">
+    <h2>Vos questions</h2>
+    <div class="faq">
+      <details><summary>Dois-je arrêter de vendre sur WhatsApp ?</summary><p>Non. Vous continuez à vendre comme avant. Kasuwa vous apporte des commandes en plus et vous prévient par WhatsApp.</p></details>
+      <details><summary>Comment je crée ma boutique ?</summary><p>Vous créez votre compte avec le nom de votre boutique, votre quartier et votre numéro WhatsApp. Ensuite, vous ajoutez vos produits et leurs prix.</p></details>
+      <details><summary>Qui paie la livraison ?</summary><p>Le client. Il règle la livraison directement au livreur à son arrivée, en espèces ou par mobile money. Vous recevez le prix de vos produits, déjà payé par mobile money.</p></details>
+      <details><summary>Que se passe-t-il à la fin de mon abonnement ?</summary><p>Votre boutique est masquée de la recherche. Vos produits sont conservés et reviennent dès que vous renouvelez. Vous recevez un rappel sur WhatsApp 7 jours avant la fin.</p></details>
+    </div>
+  </section>
+
+  <section class="final">
+    <h2>Ouvrez votre boutique aujourd’hui</h2>
+    <p>Vos 30 premiers jours sont gratuits, sans rien payer pour commencer.</p>
+  </section>
+</main>
+
+</body></html>

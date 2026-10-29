@@ -1,0 +1,913 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Kasuwa</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700&family=Figtree:wght@400;500;600;700&display=swap">
+<style>
+/* Mise en page : une colonne mobile, barre haute collante (marque + 3 espaces), cartes sobres, barre panier fixe en bas pour le client. */
+:root {
+  --display: 'Bricolage Grotesque', 'Trebuchet MS', system-ui, sans-serif;
+  --body: 'Figtree', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --bg: #F1F2F8;
+  --surface: #FFFFFF;
+  --ink: #161B36;
+  --muted: #59607F;
+  --line: #DCDFEC;
+  --accent: #2B3B9E;
+  --on-accent: #FFFFFF;
+  --accent-soft: #E2E6FA;
+  --sun: #A85F00;
+  --sun-soft: #FBEBD0;
+  --good: #1B7A4B;
+  --good-soft: #DDF1E6;
+  --bad: #B3261E;
+  --t1: #FBE9C9;
+  --t2: #F9DDE3;
+  --t3: #D9EFDF;
+  --t4: #DCE5FA;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0E1125; --surface: #171B38; --ink: #ECEFFB; --muted: #9EA6CC; --line: #2A3062;
+    --accent: #9AA8FF; --on-accent: #0E1125; --accent-soft: #252C6B;
+    --sun: #F0B050; --sun-soft: #3A2C12; --good: #6FD3A0; --good-soft: #143827; --bad: #FF8A80;
+    --t1: #3A2E16; --t2: #3C2230; --t3: #173528; --t4: #1F2850;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0E1125; --surface: #171B38; --ink: #ECEFFB; --muted: #9EA6CC; --line: #2A3062;
+  --accent: #9AA8FF; --on-accent: #0E1125; --accent-soft: #252C6B;
+  --sun: #F0B050; --sun-soft: #3A2C12; --good: #6FD3A0; --good-soft: #143827; --bad: #FF8A80;
+  --t1: #3A2E16; --t2: #3C2230; --t3: #173528; --t4: #1F2850;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font-family: var(--body); font-size: 15px; line-height: 1.45; }
+h1, h2, h3 { font-family: var(--display); margin: 0; text-wrap: balance; letter-spacing: -0.01em; line-height: 1.15; }
+p { margin: 0; }
+ul, ol { list-style: none; margin: 0; padding: 0; }
+button, input, select { font: inherit; color: inherit; }
+button { cursor: pointer; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.num { font-variant-numeric: tabular-nums; }
+
+.shell { max-width: 30rem; margin-inline: auto; padding-inline: 16px; padding-block: 0 7rem; }
+
+/* Barre haute */
+.top { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--bg); margin-inline: -16px; padding: 12px 16px 10px; display: grid; gap: 10px; border-bottom: 1px solid var(--line); }
+.brand { display: flex; align-items: center; gap: 8px; }
+.brand svg { width: 24px; height: 24px; flex: none; }
+.brand .name { font-family: var(--display); font-weight: 700; font-size: 22px; letter-spacing: -0.02em; }
+.brand .tag { margin-left: auto; font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--sun); background: var(--sun-soft); padding: 3px 8px; border-radius: 99px; }
+.roles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 3px; }
+.roles button { min-height: 40px; border: 0; border-radius: 9px; background: transparent; font-weight: 600; font-size: 14px; color: var(--muted); display: flex; align-items: center; justify-content: center; gap: 6px; min-width: 0; }
+.roles button.on { background: var(--accent); color: var(--on-accent); }
+.badge { background: var(--sun); color: var(--bg); font-size: 11px; font-weight: 700; min-width: 18px; height: 18px; border-radius: 99px; display: inline-flex; align-items: center; justify-content: center; padding-inline: 5px; }
+.roles button.on .badge { background: var(--on-accent); color: var(--accent); }
+.roledesc { font-size: 13px; color: var(--muted); }
+
+main { display: grid; gap: 16px; padding-top: 16px; }
+.intro { display: grid; gap: 6px; }
+.intro h1 { font-size: 28px; }
+.lead { color: var(--muted); }
+
+.subnav { display: flex; gap: 20px; border-bottom: 1px solid var(--line); }
+.subnav button { background: none; border: 0; padding: 10px 0; font-weight: 600; color: var(--muted); border-bottom: 2px solid transparent; margin-bottom: -1px; display: flex; gap: 6px; align-items: center; }
+.subnav button.on { color: var(--ink); border-bottom-color: var(--accent); }
+.subnav .badge { background: var(--accent-soft); color: var(--accent); }
+
+/* Recherche */
+.search { position: relative; display: block; }
+.search svg { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); width: 20px; height: 20px; color: var(--muted); pointer-events: none; }
+.search input { width: 100%; min-height: 52px; padding-left: 44px; padding-right: 14px; border: 1.5px solid var(--line); border-radius: 14px; background: var(--surface); font-size: 16px; }
+.search input:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; border-color: var(--accent); }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { min-height: 36px; padding-inline: 14px; border-radius: 99px; border: 1px solid var(--line); background: var(--surface); font-weight: 500; font-size: 14px; }
+.chip.on { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); font-weight: 600; }
+.countline { color: var(--muted); font-size: 14px; }
+.countline strong { color: var(--ink); }
+
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 14px; display: grid; gap: 10px; }
+.list { display: grid; gap: 12px; }
+.mhead { display: grid; grid-template-columns: 44px 1fr auto; gap: 12px; align-items: center; }
+.mhead h3 { font-size: 17px; }
+.mhead p { color: var(--muted); font-size: 13px; }
+.mhead > div { min-width: 0; }
+.avatar { width: 44px; height: 44px; border-radius: 50%; background: var(--accent-soft); color: var(--accent); font-family: var(--display); font-weight: 700; font-size: 19px; display: flex; align-items: center; justify-content: center; }
+.avatar.lg { width: 56px; height: 56px; font-size: 24px; }
+
+.plist { display: grid; }
+.prow { display: grid; grid-template-columns: 44px 1fr auto; gap: 12px; align-items: center; padding-block: 10px; border-top: 1px solid var(--line); }
+.prow .pn { font-weight: 500; min-width: 0; overflow-wrap: anywhere; }
+.prow .pp { color: var(--muted); font-size: 13px; }
+.tile { width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 22px; }
+.t1 { background: var(--t1); } .t2 { background: var(--t2); } .t3 { background: var(--t3); } .t4 { background: var(--t4); }
+.off .tile, .off .pn { opacity: 0.5; }
+.more { background: none; border: 0; color: var(--accent); font-weight: 600; text-align: left; padding: 4px 0 0; min-height: 36px; }
+
+.btn { min-height: 44px; padding-inline: 16px; border-radius: 10px; border: 1px solid transparent; background: var(--accent); color: var(--on-accent); font-weight: 600; }
+.btn.ghost { background: transparent; color: var(--accent); border-color: var(--line); }
+.btn.sm { min-height: 36px; padding-inline: 12px; font-size: 14px; }
+.btn.block { width: 100%; }
+.btn:disabled { opacity: 0.45; cursor: default; }
+.link { background: none; border: 0; padding: 0; color: var(--accent); font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
+.back { align-self: start; justify-self: start; }
+
+.step { display: inline-flex; align-items: center; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+.step button { width: 36px; height: 36px; border: 0; background: var(--accent-soft); color: var(--accent); font-size: 18px; font-weight: 700; }
+.step output { min-width: 32px; text-align: center; font-weight: 600; font-variant-numeric: tabular-nums; }
+
+.cartbar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 6; background: var(--surface); border-top: 1px solid var(--line); padding: 10px 16px calc(10px + env(safe-area-inset-bottom, 0px)); }
+.cartin { max-width: 30rem; margin-inline: auto; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.cartin div { min-width: 0; display: grid; }
+.cartin span { color: var(--muted); font-size: 13px; overflow-wrap: anywhere; }
+
+/* Formulaires */
+.form { display: grid; gap: 12px; }
+.field { display: grid; gap: 6px; }
+.field label, .field .lab { font-weight: 600; font-size: 13px; }
+.field input, .field select { width: 100%; min-height: 44px; padding-inline: 12px; border: 1.5px solid var(--line); border-radius: 10px; background: var(--surface); }
+.field input:focus-visible, .field select:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; border-color: var(--accent); }
+.ops { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.op { min-height: 44px; border-radius: 10px; border: 1.5px solid var(--line); background: var(--surface); font-weight: 600; font-size: 14px; }
+.op.on { border-color: var(--accent); background: var(--accent-soft); color: var(--accent); }
+.err { color: var(--bad); font-weight: 600; font-size: 14px; }
+.sum { display: grid; gap: 6px; }
+.sum .r { display: flex; justify-content: space-between; gap: 12px; }
+.sum .r.total { border-top: 1px solid var(--line); padding-top: 8px; font-weight: 700; font-size: 17px; }
+.sum .r span:last-child { font-variant-numeric: tabular-nums; text-align: right; }
+.sum .r span:first-child { min-width: 0; overflow-wrap: anywhere; }
+h2.sec { font-size: 18px; }
+
+.paybox { display: grid; gap: 14px; }
+.ussd { background: var(--ink); color: var(--bg); border-radius: 14px; padding: 18px; display: grid; gap: 10px; }
+.ussd .op-name { font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; opacity: 0.75; display: flex; align-items: center; gap: 8px; }
+.pulse { width: 8px; height: 8px; border-radius: 50%; background: var(--sun); animation: pulse 1.4s ease-in-out infinite; }
+@keyframes pulse { 50% { opacity: 0.25; } }
+.note { color: var(--muted); font-size: 13px; }
+.plans { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.plan { text-align: left; display: grid; gap: 4px; align-content: start; padding: 14px; border-radius: 12px; border: 1.5px solid var(--line); background: var(--surface); min-width: 0; }
+.plan.on { border-color: var(--accent); background: var(--accent-soft); }
+.plan .pl { font-weight: 600; }
+.plan .pr { font-family: var(--display); font-weight: 700; font-size: 20px; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+.plan .pe { color: var(--muted); font-size: 13px; }
+.plan .ofr { font-size: 13px; font-weight: 700; color: var(--good); }
+
+/* Suivi */
+.ohead { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+.ohead strong { font-family: var(--display); font-size: 17px; }
+.pill { font-size: 12px; font-weight: 700; padding: 3px 10px; border-radius: 99px; white-space: nowrap; }
+.pill.new { background: var(--accent-soft); color: var(--accent); }
+.pill.wait { background: var(--sun-soft); color: var(--sun); }
+.pill.ok { background: var(--good-soft); color: var(--good); }
+.items { overflow-wrap: anywhere; }
+.muted { color: var(--muted); font-size: 13px; }
+.tl { display: grid; margin-top: 4px; }
+.tl li { position: relative; padding: 0 0 14px 28px; color: var(--muted); }
+.tl li:last-child { padding-bottom: 0; }
+.tl li::before { content: ''; position: absolute; left: 6px; top: 18px; bottom: -2px; width: 2px; background: var(--line); }
+.tl li:last-child::before { display: none; }
+.tl .dot { position: absolute; left: 0; top: 3px; width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--line); background: var(--surface); }
+.tl li.done { color: var(--ink); }
+.tl li.done::before { background: var(--good); }
+.tl li.done .dot { background: var(--good); border-color: var(--good); }
+.tl li.now { color: var(--ink); font-weight: 600; }
+.tl li.now .dot { background: var(--accent); border-color: var(--accent); box-shadow: 0 0 0 4px var(--accent-soft); }
+.demo { background: var(--accent-soft); border-radius: 10px; padding: 10px 12px; font-size: 14px; }
+.wa { font-size: 13px; color: var(--good); font-weight: 600; }
+.orow2 { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.orow2 > span:first-child { min-width: 0; }
+
+.empty { background: var(--surface); border: 1.5px dashed var(--line); border-radius: 14px; padding: 22px 16px; display: grid; gap: 10px; justify-items: start; }
+.empty h3 { font-size: 17px; }
+.empty p { color: var(--muted); }
+
+.route { display: grid; gap: 10px; }
+.route > div { display: grid; gap: 1px; }
+.route .lab { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+.earn { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.earn .big { font-family: var(--display); font-weight: 700; font-size: 30px; font-variant-numeric: tabular-nums; }
+
+.toast { position: fixed; top: calc(env(safe-area-inset-top, 0px) + 8px); left: 0; right: 0; z-index: 20; padding-inline: 16px; pointer-events: none; }
+.tin { pointer-events: auto; max-width: 28rem; margin-inline: auto; background: var(--ink); color: var(--bg); border-radius: 14px; padding: 14px; display: flex; gap: 10px; align-items: flex-start; box-shadow: 0 8px 28px rgba(10, 14, 40, 0.28); }
+.tin > div { display: grid; gap: 6px; min-width: 0; flex: 1; }
+.tin p { font-size: 14px; opacity: 0.92; overflow-wrap: anywhere; }
+.tin .btn { background: var(--bg); color: var(--ink); justify-self: start; }
+.tin .x { background: none; border: 0; font-size: 22px; line-height: 1; width: 32px; height: 32px; color: inherit; flex: none; }
+
+@media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+</style>
+
+<div class="shell"><div id="app"></div></div>
+<div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+
+<script>
+(function () {
+  'use strict';
+
+  var FEE = 500;
+  var DRIVER = 'Moussa';
+  var CATS = ['Gâteaux', 'Boissons', 'Plats', 'Snacks'];
+  var EMOJI = { 'Gâteaux': '🎂', 'Boissons': '🥤', 'Plats': '🍲', 'Snacks': '🥟' };
+  var TINT = { 'Gâteaux': 't2', 'Boissons': 't3', 'Plats': 't1', 'Snacks': 't4' };
+  var OPS = ['Airtel Money', 'Moov Money', 'Orange Money', 'Mynita'];
+  var STEPS = ['Paiement reçu', 'Préparation en cours', 'Prête à être récupérée', 'En livraison', 'Livrée'];
+
+  var $ = function (s) { return document.querySelector(s); };
+  var esc = function (s) {
+    return String(s).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  };
+  var fcfa = function (n) { return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ' ') + ' FCFA'; };
+  var norm = function (s) {
+    return String(s).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '')
+      .replace(/[^a-z0-9 ]/g, ' ').replace(/\s+/g, ' ').trim();
+  };
+  var stem = function (w) { return w.length > 3 ? w.replace(/(x|s)$/, '') : w; };
+  var hhmm = function () { return new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }); };
+  var plural = function (n, a, b) { return n + ' ' + (n > 1 ? b : a); };
+
+  var pid = 100;
+  var mk = function (name, price, cat) { return { id: ++pid, name: name, price: price, cat: cat, on: true }; };
+
+  var merchants = [
+    { id: 1, name: 'Hadiza Pâtisserie', quartier: 'Yantala', phone: '96 40 11 22', rating: '4,9', orders: 128, products: [
+      mk('Gâteau d’anniversaire chocolat', 12000, 'Gâteaux'),
+      mk('Gâteau au yaourt (entier)', 4500, 'Gâteaux'),
+      mk('Cupcakes (boîte de 6)', 3000, 'Gâteaux'),
+      mk('Beignets (10 pièces)', 1000, 'Snacks')
+    ] },
+    { id: 2, name: 'Mariama Délices', quartier: 'Plateau', phone: '90 22 38 51', rating: '4,7', orders: 86, products: [
+      mk('Gâteau marbré', 5000, 'Gâteaux'),
+      mk('Cake aux dattes', 3500, 'Gâteaux'),
+      mk('Samosas (12 pièces)', 2500, 'Snacks'),
+      mk('Jus de gingembre 1L', 1200, 'Boissons')
+    ] },
+    { id: 3, name: 'Fati Jus & Co', quartier: 'Lazaret', phone: '93 61 07 74', rating: '4,8', orders: 64, products: [
+      mk('Jus de bissap 1L', 1000, 'Boissons'),
+      mk('Jus de gingembre 1L', 1200, 'Boissons'),
+      mk('Jus de baobab 1L', 1500, 'Boissons')
+    ] },
+    { id: 4, name: 'Ramatou Cuisine', quartier: 'Recasement', phone: '97 14 59 30', rating: '4,6', orders: 52, products: [
+      mk('Riz gras (portion)', 2000, 'Plats'),
+      mk('Dambou (portion)', 1500, 'Plats'),
+      mk('Brochettes de bœuf (5)', 1500, 'Plats'),
+      mk('Masa (10 pièces)', 1000, 'Snacks')
+    ] },
+    { id: 5, name: 'Zeinabou Cakes', quartier: 'Gamkallé', phone: '91 83 20 66', rating: '4,8', orders: 97, products: [
+      mk('Gâteau chocolat (moule moyen)', 6500, 'Gâteaux'),
+      mk('Gâteau à la vanille', 5500, 'Gâteaux'),
+      mk('Gâteau de mariage (3 étages)', 35000, 'Gâteaux')
+    ] }
+  ];
+  var nextM = 6;
+
+  /* Abonnement : montants d'exemple à ajuster après les premiers retours */
+  var PLANS = {
+    monthly: { label: 'Mensuel', price: 3000, days: 30, per: 'par mois', offer: 'Sans engagement' },
+    annual: { label: 'Annuel', price: 30000, days: 365, per: 'par an', offer: '2 mois offerts · 2 500 FCFA par mois' }
+  };
+  var SUBS = {
+    1: { plan: 'monthly', days: 18 }, 2: { plan: 'trial', days: 9 }, 3: { plan: 'annual', days: 240 },
+    4: { plan: 'trial', days: 4 }, 5: { plan: 'monthly', days: 26 }
+  };
+  merchants.forEach(function (m) { m.sub = SUBS[m.id]; });
+
+  var S = {
+    role: 'client', cTab: 'search', view: 'search', query: '', shopId: null,
+    cart: { mid: null, items: {} },
+    form: { name: 'Ibrahim', phone: '96 12 34 56', quartier: 'Gamkallé', landmark: 'Près du marché, portail bleu', op: 'Airtel Money', del: 'cash' },
+    err: '',
+    mTab: 'orders', mid: 1, creating: false,
+    newM: { name: '', quartier: '', phone: '' },
+    newP: { name: '', price: '', cat: 'Gâteaux' },
+    sub: { plan: 'annual', op: 'Airtel Money', pending: false },
+    dtab: 'deliveries', dsub: { plan: 'monthly', op: 'Airtel Money', pending: false },
+    nextId: 1043,
+    orders: [
+      { id: 1042, mid: 1, items: [{ name: 'Gâteau au yaourt (entier)', qty: 1, price: 4500 }], sub: 4500, fee: FEE, total: 4500, status: 'preparing',
+        cust: { name: 'Salamatou', phone: '90 55 21 08', quartier: 'Koira Kano', landmark: 'Derrière l’école, portail vert' }, pay: 'Moov Money', mine: false, driver: null, t: '15:48' },
+      { id: 1041, mid: 4, items: [{ name: 'Riz gras (portion)', qty: 2, price: 2000 }], sub: 4000, fee: FEE, total: 4000, status: 'ready',
+        cust: { name: 'Oumarou', phone: '97 31 66 40', quartier: 'Lazaret', landmark: 'Près de la station Total' }, pay: 'Airtel Money', mine: false, driver: null, t: '15:30' },
+      { id: 1040, mid: 3, items: [{ name: 'Jus de bissap 1L', qty: 2, price: 1000 }], sub: 2000, fee: FEE, total: 2000, status: 'delivered',
+        cust: { name: 'Mariam', phone: '93 08 74 15', quartier: 'Plateau', landmark: 'Immeuble en face de la banque' }, pay: 'Orange Money', mine: false, driver: DRIVER, t: '14:55' }
+    ]
+  };
+
+  var M = function (id) { return merchants.find(function (m) { return m.id === id; }); };
+  var isActive = function (m) { return m.sub.plan !== 'expired' && m.sub.days > 0; };
+  var subWarn = function (m) { return !isActive(m) || m.sub.days <= 7; };
+  function endText(days) {
+    var d = new Date();
+    d.setDate(d.getDate() + days);
+    return d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
+  }
+
+  /* Panier */
+  function lines() {
+    var m = M(S.cart.mid);
+    if (!m) return [];
+    return Object.keys(S.cart.items).map(function (id) {
+      return { p: m.products.find(function (p) { return String(p.id) === id; }), q: S.cart.items[id] };
+    }).filter(function (l) { return l.p && l.q > 0; });
+  }
+  var count = function () { return lines().reduce(function (a, l) { return a + l.q; }, 0); };
+  var sub = function () { return lines().reduce(function (a, l) { return a + l.q * l.p.price; }, 0); };
+  function change(mid, id, d) {
+    if (S.cart.mid !== mid) {
+      if (count() > 0) toast('Panier remplacé', 'Une commande concerne une seule commerçante. Votre panier précédent a été vidé.');
+      S.cart = { mid: mid, items: {} };
+    }
+    var q = Math.max(0, (S.cart.items[id] || 0) + d);
+    if (q) S.cart.items[id] = q; else delete S.cart.items[id];
+    if (!count()) S.cart = { mid: null, items: {} };
+  }
+  var qtyOf = function (mid, id) { return S.cart.mid === mid ? (S.cart.items[id] || 0) : 0; };
+
+  /* Statuts */
+  function stepIdx(s) { return { paid: 1, preparing: 2, ready: 3, assigned: 4, delivering: 4, delivered: 5 }[s]; }
+  function pill(o) {
+    var map = {
+      paid: ['new', 'Nouvelle · payée'], preparing: ['wait', 'En préparation'], ready: ['wait', 'Prête'],
+      assigned: ['new', 'Livreur en route'], delivering: ['new', 'En livraison'], delivered: ['ok', 'Livrée']
+    }[o.status];
+    return '<span class="pill ' + map[0] + '">' + map[1] + '</span>';
+  }
+  function itemsText(o) {
+    return esc(o.items.map(function (i) { return i.qty + ' × ' + i.name; }).join(', '));
+  }
+  function nArticles(o) { return o.items.reduce(function (a, i) { return a + i.qty; }, 0); }
+  function delLabel(o) { return o.delPay === 'momo' ? 'par mobile money' : 'en espèces'; }
+
+  function timeline(o) {
+    var k = stepIdx(o.status);
+    return '<ol class="tl">' + STEPS.map(function (label, i) {
+      var n = i + 1;
+      var st = n < k ? 'done' : (n === k ? (k === 5 ? 'done' : 'now') : 'todo');
+      var extra = '';
+      if (n === 4 && o.status === 'assigned') extra = ' · ' + esc(o.driver) + ' va chez la commerçante';
+      if (n === 4 && o.status === 'delivering') extra = ' · ' + esc(o.driver) + ' est en route vers vous';
+      return '<li class="' + st + '"><span class="dot"></span>' + esc(label) + extra + '</li>';
+    }).join('') + '</ol>';
+  }
+
+  /* Toast */
+  var tt;
+  function toast(title, msg, act) {
+    var el = $('#toast');
+    el.innerHTML = '<div class="tin"><div><strong>' + esc(title) + '</strong><p>' + esc(msg) + '</p>' +
+      (act ? '<button class="btn sm" data-a="' + act.a + '" data-v="' + esc(act.v) + '">' + esc(act.l) + '</button>' : '') +
+      '</div><button class="x" data-a="closeToast" aria-label="Fermer">×</button></div>';
+    el.hidden = false;
+    clearTimeout(tt);
+    tt = setTimeout(function () { el.hidden = true; }, 10000);
+  }
+
+  /* En-tête */
+  var ICON_SEARCH = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>';
+  var BRAND_MARK = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 1.5l10.5 10.5L12 22.5 1.5 12z" fill="var(--accent)"/><path d="M12 6.5l5.5 5.5-5.5 5.5L6.5 12z" fill="var(--bg)"/><path d="M12 9.5l2.5 2.5-2.5 2.5L9.5 12z" fill="var(--sun)"/></svg>';
+
+  function head() {
+    var nNew = S.orders.filter(function (o) { return o.mid === S.mid && o.status === 'paid'; }).length;
+    var nReady = !isActive(driver) ? 0 : S.orders.filter(function (o) { return o.status === 'ready'; }).length;
+    var desc = {
+      client: 'Ce que voit la personne qui achète.',
+      merchant: 'Ce que voit la commerçante : ses commandes et ses produits.',
+      driver: 'Ce que voit le livreur : les livraisons à prendre.'
+    }[S.role];
+    function tab(r, label, n) {
+      return '<button class="' + (S.role === r ? 'on' : '') + '" data-a="role" data-v="' + r + '">' + label +
+        (n ? '<span class="badge">' + n + '</span>' : '') + '</button>';
+    }
+    return '<header class="top"><div class="brand">' + BRAND_MARK + '<span class="name">Kasuwa</span><span class="tag">Prototype</span></div>' +
+      '<nav class="roles" aria-label="Espaces">' + tab('client', 'Client', 0) + tab('merchant', 'Commerçante', nNew) + tab('driver', 'Livreur', nReady) + '</nav>' +
+      '<p class="roledesc">' + desc + ' Les produits, prix et noms sont des exemples.</p></header>';
+  }
+
+  /* ---------- Client ---------- */
+  function prow(m, p) {
+    var q = qtyOf(m.id, p.id);
+    var action = !p.on
+      ? '<span class="note">Épuisé</span>'
+      : '<button class="btn sm ' + (q ? '' : 'ghost') + '" data-a="add" data-m="' + m.id + '" data-p="' + p.id + '">' + (q ? 'Ajouté ×' + q : 'Ajouter') + '</button>';
+    return '<li class="prow ' + (p.on ? '' : 'off') + '"><span class="tile ' + TINT[p.cat] + '">' + EMOJI[p.cat] + '</span>' +
+      '<div class="pn">' + esc(p.name) + '<div class="pp num">' + fcfa(p.price) + '</div></div>' + action + '</li>';
+  }
+
+  function ratingLine(m) {
+    return esc(m.quartier) + ' · ' + (m.rating === 'Nouvelle' ? 'Nouvelle boutique' : '★ ' + m.rating + ' · ' + m.orders + ' commandes');
+  }
+
+  function results() {
+    var toks = norm(S.query).split(' ').filter(Boolean).map(stem);
+    var list = merchants.filter(isActive).map(function (m) {
+      var mh = norm(m.name + ' ' + m.quartier);
+      var hit = m.products.filter(function (p) {
+        var h = norm(p.name + ' ' + p.cat);
+        return toks.every(function (t) { return h.indexOf(t) !== -1; });
+      });
+      var mHit = toks.length && toks.every(function (t) { return mh.indexOf(t) !== -1; });
+      var shown = toks.length ? (hit.length ? hit : (mHit ? m.products : [])) : m.products;
+      return { m: m, shown: shown };
+    }).filter(function (x) { return x.shown.length; });
+
+    var line = S.query.trim()
+      ? '<p class="countline"><strong>' + plural(list.length, 'commerçante vend', 'commerçantes vendent') + '</strong> « ' + esc(S.query.trim()) + ' »</p>'
+      : '<p class="countline"><strong>' + plural(list.length, 'commerçante', 'commerçantes') + '</strong> sur Kasuwa</p>';
+
+    if (!list.length) {
+      return line + '<div class="empty"><h3>Aucun résultat</h3><p>Personne ne vend « ' + esc(S.query.trim()) + ' » pour le moment. Essayez un autre mot, par exemple « gâteau » ou « bissap ».</p></div>';
+    }
+    return line + '<div class="list">' + list.map(function (x) {
+      var m = x.m;
+      return '<article class="card"><div class="mhead"><span class="avatar">' + esc(m.name.charAt(0)) + '</span>' +
+        '<div><h3>' + esc(m.name) + '</h3><p>' + ratingLine(m) + '</p></div>' +
+        '<button class="btn ghost sm" data-a="shop" data-v="' + m.id + '">Boutique</button></div>' +
+        '<ul class="plist">' + x.shown.slice(0, 3).map(function (p) { return prow(m, p); }).join('') + '</ul>' +
+        (x.shown.length > 3 ? '<button class="more" data-a="shop" data-v="' + m.id + '">Voir les ' + x.shown.length + ' produits</button>' : '') +
+        '</article>';
+    }).join('') + '</div>';
+  }
+
+  function vSearch() {
+    return '<section class="intro"><h1>Que voulez-vous acheter ?</h1><p class="lead">Toutes les commerçantes qui vendent sur WhatsApp, au même endroit.</p></section>' +
+      '<label class="search"><span class="sr">Rechercher un produit</span>' + ICON_SEARCH +
+      '<input id="q" type="search" value="' + esc(S.query) + '" placeholder="Gâteau, jus de bissap, brochettes…" autocomplete="off" data-bind="q"></label>' +
+      '<div class="chips">' + CATS.map(function (c) {
+        return '<button class="chip ' + (norm(S.query) === norm(c) ? 'on' : '') + '" data-a="cat" data-v="' + c + '">' + c + '</button>';
+      }).join('') + '</div>' +
+      '<div id="results" class="list">' + results() + '</div>';
+  }
+
+  function vShop() {
+    var m = M(S.shopId);
+    return '<button class="btn ghost sm back" data-a="back">← Retour aux résultats</button>' +
+      '<section class="card"><div class="mhead" style="grid-template-columns:56px 1fr"><span class="avatar lg">' + esc(m.name.charAt(0)) + '</span>' +
+      '<div><h2>' + esc(m.name) + '</h2><p>' + ratingLine(m) + '</p><p>Vend sur WhatsApp · ' + esc(m.phone) + '</p></div></div></section>' +
+      (m.products.length
+        ? '<ul class="card plist" style="gap:0;padding-block:4px">' + m.products.map(function (p) {
+          var q = qtyOf(m.id, p.id);
+          var ctl = !p.on ? '<span class="note">Épuisé</span>'
+            : (q ? '<div class="step"><button aria-label="Retirer un" data-a="dec" data-m="' + m.id + '" data-p="' + p.id + '">−</button><output>' + q + '</output><button aria-label="Ajouter un" data-a="add" data-m="' + m.id + '" data-p="' + p.id + '">+</button></div>'
+              : '<button class="btn sm" data-a="add" data-m="' + m.id + '" data-p="' + p.id + '">Ajouter</button>');
+          return '<li class="prow ' + (p.on ? '' : 'off') + '" style="border-top:0;border-bottom:1px solid var(--line)"><span class="tile ' + TINT[p.cat] + '">' + EMOJI[p.cat] + '</span>' +
+            '<div class="pn">' + esc(p.name) + '<div class="pp num">' + fcfa(p.price) + '</div></div>' + ctl + '</li>';
+        }).join('') + '</ul>'
+        : '<div class="empty"><h3>Pas encore de produits</h3><p>Cette boutique vient d’ouvrir.</p></div>');
+  }
+
+  function vCheckout() {
+    var m = M(S.cart.mid), ls = lines(), s = sub(), f = S.form;
+    return '<button class="btn ghost sm back" data-a="shop" data-v="' + m.id + '">← Retour à la boutique</button>' +
+      '<h2 class="sec">Votre commande chez ' + esc(m.name) + '</h2>' +
+      '<section class="card sum">' + ls.map(function (l) {
+        return '<div class="r"><span>' + l.q + ' × ' + esc(l.p.name) + '</span><span>' + fcfa(l.q * l.p.price) + '</span></div>';
+      }).join('') +
+      '<div class="r total"><span>À payer maintenant</span><span>' + fcfa(s) + '</span></div>' +
+      '<div class="r"><span class="muted">Livraison, à régler au livreur à son arrivée (tarif d’exemple)</span><span class="muted">' + fcfa(FEE) + '</span></div></section>' +
+      '<section class="card form"><h3>Où livrer ?</h3>' +
+      '<div class="field"><label for="f-name">Votre nom</label><input id="f-name" data-bind="f.name" value="' + esc(f.name) + '" autocomplete="name"></div>' +
+      '<div class="field"><label for="f-phone">Téléphone</label><input id="f-phone" data-bind="f.phone" value="' + esc(f.phone) + '" inputmode="tel" autocomplete="tel"></div>' +
+      '<div class="field"><label for="f-q">Quartier</label><input id="f-q" data-bind="f.quartier" value="' + esc(f.quartier) + '"></div>' +
+      '<div class="field"><label for="f-l">Repère pour le livreur</label><input id="f-l" data-bind="f.landmark" value="' + esc(f.landmark) + '"></div></section>' +
+      '<section class="card form"><h3>Payer avec</h3><div class="ops">' + OPS.map(function (o) {
+        return '<button class="op ' + (f.op === o ? 'on' : '') + '" data-a="op" data-v="' + o + '" aria-pressed="' + (f.op === o) + '">' + o + '</button>';
+      }).join('') + '</div></section>' +
+      '<section class="card form"><h3>Livraison : comment payer le livreur ?</h3><div class="ops">' +
+      '<button class="op ' + (f.del === 'cash' ? 'on' : '') + '" data-a="del" data-v="cash" aria-pressed="' + (f.del === 'cash') + '">En espèces</button>' +
+      '<button class="op ' + (f.del === 'momo' ? 'on' : '') + '" data-a="del" data-v="momo" aria-pressed="' + (f.del === 'momo') + '">Par mobile money</button></div>' +
+      '<p class="note">Vous réglez ' + fcfa(FEE) + ' directement au livreur à son arrivée.</p></section>' +
+      (S.err ? '<p class="err" role="alert">' + esc(S.err) + '</p>' : '') +
+      '<button class="btn block" data-a="pay">Payer ' + fcfa(s) + '</button>';
+  }
+
+  function vPay() {
+    var f = S.form, total = sub();
+    return '<section class="paybox"><h2 class="sec">Validez le paiement</h2>' +
+      '<div class="ussd"><span class="op-name"><span class="pulse"></span>' + esc(f.op) + '</span>' +
+      '<p>Validez le paiement de <strong>' + fcfa(total) + '</strong> depuis votre téléphone (' + esc(f.phone) + '). Saisissez votre code secret quand il vous est demandé.</p></div>' +
+      '<p class="note">Prototype : aucun argent n’est débité. Le bouton ci-dessous remplace la validation sur le téléphone.</p>' +
+      '<button class="btn block" data-a="confirmPay">Simuler la validation du paiement</button>' +
+      '<button class="btn ghost block" data-a="cancelPay">Modifier la commande</button></section>';
+  }
+
+  function vOrders() {
+    var mine = S.orders.filter(function (o) { return o.mine; }).sort(function (a, b) { return b.id - a.id; });
+    if (!mine.length) {
+      return '<div class="empty"><h3>Aucune commande pour le moment</h3><p>Cherchez un produit, choisissez une commerçante et payez par mobile money. Le suivi apparaît ici.</p>' +
+        '<button class="btn" data-a="ctab" data-v="search">Chercher un produit</button></div>';
+    }
+    return '<div class="list">' + mine.map(function (o) {
+      var m = M(o.mid);
+      var next = {
+        paid: '<button class="link" data-a="goMerchant" data-v="' + o.mid + '">Voir côté commerçante</button> pour accepter la commande.',
+        preparing: '<button class="link" data-a="goMerchant" data-v="' + o.mid + '">Voir côté commerçante</button> pour la marquer prête.',
+        ready: '<button class="link" data-a="role" data-v="driver">Voir côté livreur</button> pour la prendre en charge.',
+        assigned: '<button class="link" data-a="role" data-v="driver">Voir côté livreur</button> pour confirmer le retrait.',
+        delivering: '<button class="link" data-a="role" data-v="driver">Voir côté livreur</button> pour terminer la livraison.',
+        delivered: 'Merci pour votre commande.'
+      }[o.status];
+      return '<article class="card"><div class="ohead"><strong>Commande #' + o.id + '</strong>' + pill(o) + '</div>' +
+        '<p class="muted">' + esc(m.name) + ' · ' + o.t + '</p>' +
+        '<p class="items">' + itemsText(o) + '</p>' +
+        '<p class="muted num">Payé ' + fcfa(o.total) + ' avec ' + esc(o.pay) + ' · Livraison ' + fcfa(o.fee) + (o.status === 'delivered' ? ' réglée au livreur ' : ' à régler au livreur ') + delLabel(o) + '</p>' +
+        timeline(o) + '<p class="demo"><strong>Démo :</strong> ' + next + '</p></article>';
+    }).join('') + '</div>';
+  }
+
+  function vClient() {
+    var n = S.orders.filter(function (o) { return o.mine; }).length;
+    var flow = S.cTab === 'search' && (S.view === 'checkout' || S.view === 'pay');
+    var nav = '<div class="subnav" role="tablist">' +
+      '<button class="' + (S.cTab === 'search' ? 'on' : '') + '" data-a="ctab" data-v="search">Rechercher</button>' +
+      '<button class="' + (S.cTab === 'orders' ? 'on' : '') + '" data-a="ctab" data-v="orders">Mes commandes' + (n ? '<span class="badge">' + n + '</span>' : '') + '</button></div>';
+    var b;
+    if (S.cTab === 'orders') b = vOrders();
+    else if (S.view === 'shop') b = vShop();
+    else if (S.view === 'checkout') b = vCheckout();
+    else if (S.view === 'pay') b = vPay();
+    else b = vSearch();
+    return (flow ? '' : nav) + b;
+  }
+
+  function cartbar() {
+    if (S.role !== 'client' || S.cTab !== 'search' || (S.view !== 'search' && S.view !== 'shop')) return '';
+    var n = count();
+    if (!n) return '';
+    var m = M(S.cart.mid);
+    return '<div class="cartbar"><div class="cartin"><div><strong>' + plural(n, 'article', 'articles') + '</strong><span>' + esc(m.name) + ' · ' + fcfa(sub()) + '</span></div>' +
+      '<button class="btn" data-a="checkout">Commander</button></div></div>';
+  }
+
+  /* ---------- Commerçante ---------- */
+  function mAction(o) {
+    if (o.status === 'paid') return '<button class="btn sm" data-a="mstat" data-o="' + o.id + '" data-v="preparing">Accepter et préparer</button>';
+    if (o.status === 'preparing') return '<button class="btn sm" data-a="mstat" data-o="' + o.id + '" data-v="ready">Commande prête</button>';
+    if (o.status === 'ready') return '<span class="note">Un livreur va passer la récupérer.</span>';
+    if (o.status === 'assigned') return '<span class="note">' + esc(o.driver) + ' arrive pour la récupérer.</span>';
+    if (o.status === 'delivering') return '<span class="note">En route chez le client.</span>';
+    return '<span class="note">Livrée.</span>';
+  }
+
+  function vMerchant() {
+    var m = M(S.mid);
+    var sel = '<div class="field"><label for="msel">Ma boutique</label><select id="msel" data-bind="msel">' +
+      merchants.map(function (x) { return '<option value="' + x.id + '"' + (!S.creating && x.id === S.mid ? ' selected' : '') + '>' + esc(x.name) + '</option>'; }).join('') +
+      '<option value="new"' + (S.creating ? ' selected' : '') + '>+ Créer un compte commerçante</option></select></div>';
+
+    if (S.creating) {
+      return sel + '<section class="card form"><h2 class="sec">Créer mon compte</h2>' +
+        '<div class="field"><label for="nm-n">Nom de la boutique</label><input id="nm-n" data-bind="nm.name" value="' + esc(S.newM.name) + '" placeholder="Ex. Aïssa Gâteaux"></div>' +
+        '<div class="field"><label for="nm-q">Quartier</label><input id="nm-q" data-bind="nm.quartier" value="' + esc(S.newM.quartier) + '" placeholder="Ex. Yantala"></div>' +
+        '<div class="field"><label for="nm-p">Numéro WhatsApp</label><input id="nm-p" data-bind="nm.phone" value="' + esc(S.newM.phone) + '" inputmode="tel" placeholder="Ex. 96 00 00 00"></div>' +
+        (S.err ? '<p class="err" role="alert">' + esc(S.err) + '</p>' : '') +
+        '<button class="btn block" data-a="createM">Créer mon compte</button>' +
+        '<button class="btn ghost block" data-a="cancelM">Annuler</button></section>';
+    }
+
+    var tabs = '<div class="subnav" role="tablist">' +
+      '<button class="' + (S.mTab === 'orders' ? 'on' : '') + '" data-a="mtab" data-v="orders">Commandes</button>' +
+      '<button class="' + (S.mTab === 'products' ? 'on' : '') + '" data-a="mtab" data-v="products">Mes produits</button>' +
+      '<button class="' + (S.mTab === 'sub' ? 'on' : '') + '" data-a="mtab" data-v="sub">Abonnement' + (subWarn(m) ? '<span class="badge">!</span>' : '') + '</button></div>';
+
+    var body;
+    if (S.mTab === 'orders') {
+      var os = S.orders.filter(function (o) { return o.mid === m.id; }).sort(function (a, b) { return b.id - a.id; });
+      body = os.length ? '<div class="list">' + os.map(function (o) {
+        return '<article class="card"><div class="ohead"><strong>#' + o.id + ' · ' + esc(o.cust.name) + '</strong>' + pill(o) + '</div>' +
+          '<p class="items">' + itemsText(o) + '</p>' +
+          '<p class="muted">' + esc(o.cust.quartier) + ' · ' + esc(o.cust.phone) + ' · ' + o.t + '</p>' +
+          (o.status === 'paid' ? '<p class="wa">Message WhatsApp envoyé à ' + o.t + '</p>' : '') +
+          '<div class="orow2"><span class="num"><strong>' + fcfa(o.sub) + '</strong> <span class="muted">déjà payés par ' + esc(o.pay) + '</span></span>' + mAction(o) + '</div></article>';
+      }).join('') + '</div>'
+        : '<div class="empty"><h3>Aucune commande pour le moment</h3><p>Quand un client paie, vous recevez un message WhatsApp et la commande apparaît ici.</p></div>';
+    } else if (S.mTab === 'sub') {
+      body = vSub(m);
+    } else {
+      body = (m.products.length
+        ? '<ul class="card plist" style="gap:0;padding-block:4px">' + m.products.map(function (p) {
+          return '<li class="prow ' + (p.on ? '' : 'off') + '" style="border-top:0;border-bottom:1px solid var(--line)"><span class="tile ' + TINT[p.cat] + '">' + EMOJI[p.cat] + '</span>' +
+            '<div class="pn">' + esc(p.name) + '<div class="pp num">' + fcfa(p.price) + '</div></div>' +
+            '<button class="btn ghost sm" data-a="toggle" data-p="' + p.id + '">' + (p.on ? 'Marquer épuisé' : 'Remettre en vente') + '</button></li>';
+        }).join('') + '</ul>'
+        : '<div class="empty"><h3>Aucun produit</h3><p>Ajoutez votre premier produit pour apparaître dans les recherches.</p></div>') +
+        '<section class="card form"><h3>Ajouter un produit</h3>' +
+        '<div class="field"><label for="np-n">Nom du produit</label><input id="np-n" data-bind="np.name" value="' + esc(S.newP.name) + '" placeholder="Ex. Gâteau noix de coco"></div>' +
+        '<div class="field"><label for="np-p">Prix (FCFA)</label><input id="np-p" data-bind="np.price" value="' + esc(S.newP.price) + '" inputmode="numeric" placeholder="Ex. 4500"></div>' +
+        '<div class="field"><label for="np-c">Catégorie</label><select id="np-c" data-bind="np.cat">' + CATS.map(function (c) {
+          return '<option' + (S.newP.cat === c ? ' selected' : '') + '>' + c + '</option>';
+        }).join('') + '</select></div>' +
+        (S.err ? '<p class="err" role="alert">' + esc(S.err) + '</p>' : '') +
+        '<button class="btn block" data-a="addP">Ajouter le produit</button></section>';
+    }
+    return sel + '<section class="card"><div class="mhead" style="grid-template-columns:44px 1fr"><span class="avatar">' + esc(m.name.charAt(0)) + '</span>' +
+      '<div><h2 style="font-size:18px">' + esc(m.name) + '</h2><p>' + ratingLine(m) + ' · WhatsApp ' + esc(m.phone) + '</p></div></div></section>' + subBanner(m) + tabs + body;
+  }
+
+  function subBanner(m) {
+    if (S.mTab === 'sub') return '';
+    if (!isActive(m)) {
+      return '<p class="demo"><strong>Boutique masquée.</strong> Votre abonnement est terminé, les clients ne vous voient plus dans la recherche. <button class="link" data-a="mtab" data-v="sub">Renouveler</button></p>';
+    }
+    if (m.sub.days <= 7) {
+      return '<p class="demo"><strong>' + plural(m.sub.days, 'jour restant', 'jours restants') + '</strong> sur votre ' + (m.sub.plan === 'trial' ? 'essai gratuit' : 'abonnement') +
+        '. <button class="link" data-a="mtab" data-v="sub">Choisir un abonnement</button></p>';
+    }
+    return '';
+  }
+
+  function vSub(m) {
+    var s = m.sub, act = isActive(m), P = PLANS[S.sub.plan];
+    var label = { trial: 'Essai gratuit', monthly: 'Abonnement mensuel', annual: 'Abonnement annuel', expired: 'Abonnement terminé' }[s.plan];
+
+    if (S.sub.pending) {
+      return '<section class="paybox"><h2 class="sec">Validez le paiement</h2>' +
+        '<div class="ussd"><span class="op-name"><span class="pulse"></span>' + esc(S.sub.op) + '</span>' +
+        '<p>Validez le paiement de <strong>' + fcfa(P.price) + '</strong> pour l’abonnement ' + P.label.toLowerCase() + ' depuis votre téléphone (' + esc(m.phone) + '). Saisissez votre code secret quand il vous est demandé.</p></div>' +
+        '<p class="note">Prototype : aucun argent n’est débité. Le bouton ci-dessous remplace la validation sur le téléphone.</p>' +
+        '<button class="btn block" data-a="subconfirm">Simuler la validation du paiement</button>' +
+        '<button class="btn ghost block" data-a="subcancel">Changer d’offre</button></section>';
+    }
+
+    var status = '<section class="card"><div class="ohead"><strong>' + label + '</strong>' +
+      (act ? '<span class="pill ok">Actif</span>' : '<span class="pill wait">Expiré</span>') + '</div>' +
+      (act
+        ? '<p class="num">' + plural(s.days, 'jour restant', 'jours restants') + ' · jusqu’au ' + endText(s.days) + '</p><p class="muted">Un message WhatsApp de rappel vous est envoyé 7 jours avant la fin.</p>'
+        : '<p>Votre boutique est masquée dans la recherche. Vos produits sont conservés et reviennent dès le renouvellement.</p>') + '</section>';
+
+    var plans = '<h2 class="sec">' + (act ? 'Prolonger mon abonnement' : 'Renouveler mon abonnement') + '</h2><div class="plans">' +
+      ['monthly', 'annual'].map(function (k) {
+        var p = PLANS[k];
+        return '<button class="plan ' + (S.sub.plan === k ? 'on' : '') + '" data-a="plan" data-v="' + k + '" aria-pressed="' + (S.sub.plan === k) + '">' +
+          '<span class="pl">' + p.label + '</span><span class="pr">' + fcfa(p.price) + '</span><span class="pe">' + p.per + '</span><span class="ofr">' + p.offer + '</span></button>';
+      }).join('') + '</div>';
+
+    var pay = '<section class="card form"><h3>Payer avec</h3><div class="ops">' + OPS.map(function (o) {
+      return '<button class="op ' + (S.sub.op === o ? 'on' : '') + '" data-a="subop" data-v="' + o + '" aria-pressed="' + (S.sub.op === o) + '">' + o + '</button>';
+    }).join('') + '</div><button class="btn block" data-a="subpay">Payer ' + fcfa(P.price) + '</button></section>';
+
+    var demo = act ? '<p class="demo"><strong>Démo :</strong> <button class="link" data-a="subend">simuler la fin de mon abonnement</button> pour voir la boutique disparaître de la recherche des clients.</p>' : '';
+    return status + plans + pay + demo;
+  }
+
+  /* ---------- Livreur ---------- */
+  function dCard(o) {
+    var m = M(o.mid), mineNow = o.status === 'assigned' || o.status === 'delivering';
+    var act = o.status === 'ready' ? '<button class="btn sm" data-a="dtake" data-o="' + o.id + '">Prendre cette livraison</button>'
+      : o.status === 'assigned' ? '<button class="btn sm" data-a="dpick" data-o="' + o.id + '">J’ai récupéré la commande</button>'
+      : '<button class="btn sm" data-a="ddone" data-o="' + o.id + '">Livrée et encaissée</button>';
+    return '<article class="card"><div class="ohead"><strong>Commande #' + o.id + '</strong>' + pill(o) + '</div>' +
+      '<div class="route"><div><span class="lab">Retrait</span><strong>' + esc(m.name) + '</strong><span class="muted">' + esc(m.quartier) + ' · ' + esc(m.phone) + '</span></div>' +
+      '<div><span class="lab">Livraison</span><strong>' + esc(o.cust.quartier) + '</strong><span class="muted">' + esc(o.cust.landmark) + '</span>' +
+      (mineNow ? '<span class="muted">' + esc(o.cust.name) + ' · ' + esc(o.cust.phone) + '</span>' : '') + '</div></div>' +
+      '<p class="muted">' + plural(nArticles(o), 'article', 'articles') + ' · commande déjà payée par ' + esc(o.pay) + '</p>' +
+      (o.delPay === 'momo' ? '<p class="muted">Le client paie la livraison sur votre numéro mobile money (' + esc(driver.phone) + ').</p>' : '') +
+      '<div class="orow2"><span class="num"><strong>' + fcfa(o.fee) + '</strong> <span class="muted">à encaisser ' + delLabel(o) + '</span></span>' + act + '</div></article>';
+  }
+
+  function vDeliveries() {
+    var mine = S.orders.filter(function (o) { return (o.status === 'assigned' || o.status === 'delivering') && o.driver === DRIVER; });
+    var avail = S.orders.filter(function (o) { return o.status === 'ready'; });
+    var done = S.orders.filter(function (o) { return o.status === 'delivered' && o.driver === DRIVER; });
+    var earn = done.reduce(function (a, o) { return a + o.fee; }, 0);
+    return '<section class="card"><div class="earn"><div><p class="muted">' + esc(DRIVER) + ' · encaissé aujourd’hui</p><p class="big">' + fcfa(earn) + '</p></div>' +
+      '<p class="muted">' + plural(done.length, 'livraison faite', 'livraisons faites') + '</p></div></section>' +
+      '<h2 class="sec">En cours</h2>' +
+      (mine.length ? '<div class="list">' + mine.map(dCard).join('') + '</div>'
+        : '<div class="empty"><p>Aucune livraison en cours.</p></div>') +
+      '<h2 class="sec">À prendre</h2>' +
+      (!isActive(driver) ? '<div class="empty"><h3>Abonnement terminé</h3><p>Vous ne recevez plus de nouvelles livraisons. Renouvelez votre abonnement pour les voir à nouveau.</p><button class="btn" data-a="dtab" data-v="sub">Renouveler</button></div>'
+        : avail.length ? '<div class="list">' + avail.map(dCard).join('') + '</div>'
+        : '<div class="empty"><h3>Rien à prendre pour le moment</h3><p>Dès qu’une commerçante marque une commande comme prête, elle apparaît ici.</p></div>');
+  }
+
+  /* ---------- Livreur : abonnement et espace ---------- */
+  var driver = { name: DRIVER, phone: '96 70 45 12', sub: { plan: 'trial', days: 12 } };
+  var DPLANS = {
+    monthly: { label: 'Mensuel', price: 2000, days: 30, per: 'par mois', offer: 'Sans engagement' },
+    annual: { label: 'Annuel', price: 20000, days: 365, per: 'par an', offer: '2 mois offerts' }
+  };
+
+  function dBanner() {
+    if (S.dtab === 'sub') return '';
+    if (!isActive(driver)) {
+      return '<p class="demo"><strong>Abonnement terminé.</strong> Vous ne recevez plus de nouvelles livraisons. <button class="link" data-a="dtab" data-v="sub">Renouveler</button></p>';
+    }
+    if (driver.sub.days <= 7) {
+      return '<p class="demo"><strong>' + plural(driver.sub.days, 'jour restant', 'jours restants') + '</strong> sur votre ' + (driver.sub.plan === 'trial' ? 'essai gratuit' : 'abonnement') +
+        '. <button class="link" data-a="dtab" data-v="sub">Choisir un abonnement</button></p>';
+    }
+    return '';
+  }
+
+  function vDSub() {
+    var s = driver.sub, act = isActive(driver), P = DPLANS[S.dsub.plan];
+    var label = { trial: 'Essai gratuit', monthly: 'Abonnement mensuel', annual: 'Abonnement annuel', expired: 'Abonnement terminé' }[s.plan];
+
+    if (S.dsub.pending) {
+      return '<section class="paybox"><h2 class="sec">Validez le paiement</h2>' +
+        '<div class="ussd"><span class="op-name"><span class="pulse"></span>' + esc(S.dsub.op) + '</span>' +
+        '<p>Validez le paiement de <strong>' + fcfa(P.price) + '</strong> pour l’abonnement ' + P.label.toLowerCase() + ' depuis votre téléphone (' + esc(driver.phone) + '). Saisissez votre code secret quand il vous est demandé.</p></div>' +
+        '<p class="note">Prototype : aucun argent n’est débité. Le bouton ci-dessous remplace la validation sur le téléphone.</p>' +
+        '<button class="btn block" data-a="dsubconfirm">Simuler la validation du paiement</button>' +
+        '<button class="btn ghost block" data-a="dsubcancel">Changer d’offre</button></section>';
+    }
+
+    var status = '<section class="card"><div class="ohead"><strong>' + label + '</strong>' +
+      (act ? '<span class="pill ok">Actif</span>' : '<span class="pill wait">Expiré</span>') + '</div>' +
+      (act
+        ? '<p class="num">' + plural(s.days, 'jour restant', 'jours restants') + ' · jusqu’au ' + endText(s.days) + '</p><p class="muted">Vous recevez un message WhatsApp à chaque livraison disponible. Un rappel vous est envoyé 7 jours avant la fin.</p>'
+        : '<p>Vous ne recevez plus de nouvelles livraisons. Les livraisons déjà prises restent à terminer.</p>') + '</section>';
+
+    var plans = '<h2 class="sec">' + (act ? 'Prolonger mon abonnement' : 'Renouveler mon abonnement') + '</h2><div class="plans">' +
+      ['monthly', 'annual'].map(function (k) {
+        var p = DPLANS[k];
+        return '<button class="plan ' + (S.dsub.plan === k ? 'on' : '') + '" data-a="dplan" data-v="' + k + '" aria-pressed="' + (S.dsub.plan === k) + '">' +
+          '<span class="pl">' + p.label + '</span><span class="pr">' + fcfa(p.price) + '</span><span class="pe">' + p.per + '</span><span class="ofr">' + p.offer + '</span></button>';
+      }).join('') + '</div>';
+
+    var pay = '<section class="card form"><h3>Payer avec</h3><div class="ops">' + OPS.map(function (o) {
+      return '<button class="op ' + (S.dsub.op === o ? 'on' : '') + '" data-a="dsubop" data-v="' + o + '" aria-pressed="' + (S.dsub.op === o) + '">' + o + '</button>';
+    }).join('') + '</div><button class="btn block" data-a="dsubpay">Payer ' + fcfa(P.price) + '</button></section>';
+
+    var demo = act ? '<p class="demo"><strong>Démo :</strong> <button class="link" data-a="dsubend">simuler la fin de mon abonnement</button> pour voir les livraisons disparaître de votre espace.</p>' : '';
+    return status + plans + pay + demo;
+  }
+
+  function vDriver() {
+    var warn = !isActive(driver) || driver.sub.days <= 7;
+    var tabs = '<div class="subnav" role="tablist">' +
+      '<button class="' + (S.dtab === 'deliveries' ? 'on' : '') + '" data-a="dtab" data-v="deliveries">Livraisons</button>' +
+      '<button class="' + (S.dtab === 'sub' ? 'on' : '') + '" data-a="dtab" data-v="sub">Abonnement' + (warn ? '<span class="badge">!</span>' : '') + '</button></div>';
+    return tabs + dBanner() + (S.dtab === 'sub' ? vDSub() : vDeliveries());
+  }
+
+  /* ---------- Rendu ---------- */
+  function render(top) {
+    var y = window.scrollY;
+    var body = S.role === 'client' ? vClient() : S.role === 'merchant' ? vMerchant() : vDriver();
+    $('#app').innerHTML = head() + '<main>' + body + '</main>' + cartbar();
+    window.scrollTo(0, top ? 0 : y);
+  }
+
+  function setStatus(id, st, drv) {
+    var o = S.orders.find(function (x) { return x.id === id; });
+    if (!o) return;
+    o.status = st;
+    if (drv) o.driver = drv;
+    if (st === 'ready') {
+      var mr = M(o.mid);
+      if (isActive(driver)) {
+        toast('Livreurs prévenus', 'Les livreurs abonnés reçoivent ce message sur WhatsApp : « Livraison disponible de ' + mr.quartier + ' vers ' + o.cust.quartier + ', ' + fcfa(o.fee) + ' à encaisser auprès du client. »', { a: 'role', v: 'driver', l: 'Ouvrir l’espace livreur' });
+      } else {
+        toast('Aucun livreur prévenu', 'Aucun livreur avec un abonnement actif ne reçoit cette commande. Renouvelez l’abonnement dans l’espace livreur pour la voir.', { a: 'role', v: 'driver', l: 'Ouvrir l’espace livreur' });
+      }
+    }
+  }
+
+  function validPhone(p) {
+    var d = String(p).replace(/\D/g, '');
+    if (d.indexOf('227') === 0 && d.length === 11) d = d.slice(3);
+    return d.length === 8;
+  }
+
+  /* ---------- Actions ---------- */
+  document.addEventListener('click', function (e) {
+    var el = e.target.closest('[data-a]');
+    if (!el) return;
+    var a = el.getAttribute('data-a'), v = el.getAttribute('data-v');
+    var m = +el.getAttribute('data-m'), p = +el.getAttribute('data-p'), o = +el.getAttribute('data-o');
+    var top = false;
+
+    if (a === 'closeToast') { $('#toast').hidden = true; return; }
+    if (a === 'role') { S.role = v; S.err = ''; $('#toast').hidden = true; top = true; }
+    else if (a === 'goMerchant') { S.role = 'merchant'; S.mid = +v; S.creating = false; S.mTab = 'orders'; S.err = ''; $('#toast').hidden = true; top = true; }
+    else if (a === 'ctab') { S.cTab = v; S.view = 'search'; top = true; }
+    else if (a === 'cat') { S.query = norm(S.query) === norm(v) ? '' : v; }
+    else if (a === 'shop') { S.shopId = +v; S.view = 'shop'; S.cTab = 'search'; top = true; }
+    else if (a === 'back') { S.view = 'search'; top = true; }
+    else if (a === 'add') { change(m, p, 1); }
+    else if (a === 'dec') { change(m, p, -1); }
+    else if (a === 'checkout') { if (count()) { S.view = 'checkout'; S.err = ''; top = true; } }
+    else if (a === 'op') { S.form.op = v; }
+    else if (a === 'del') { S.form.del = v; }
+    else if (a === 'pay') {
+      var f = S.form;
+      if (!f.name.trim()) S.err = 'Indiquez votre nom.';
+      else if (!validPhone(f.phone)) S.err = 'Le numéro doit avoir 8 chiffres.';
+      else if (!f.quartier.trim()) S.err = 'Indiquez votre quartier.';
+      else { S.err = ''; S.view = 'pay'; top = true; }
+    }
+    else if (a === 'cancelPay') { S.view = 'checkout'; top = true; }
+    else if (a === 'confirmPay') {
+      var ls = lines(), mer = M(S.cart.mid), s = sub();
+      var order = {
+        id: S.nextId++, mid: mer.id,
+        items: ls.map(function (l) { return { name: l.p.name, qty: l.q, price: l.p.price }; }),
+        sub: s, fee: FEE, total: s, status: 'paid',
+        cust: { name: S.form.name.trim(), phone: S.form.phone.trim(), quartier: S.form.quartier.trim(), landmark: S.form.landmark.trim() },
+        pay: S.form.op, delPay: S.form.del, mine: true, driver: null, t: hhmm()
+      };
+      S.orders.push(order);
+      S.cart = { mid: null, items: {} };
+      S.cTab = 'orders'; S.view = 'search'; top = true;
+      toast('Commande #' + order.id + ' payée',
+        mer.name + ' reçoit ce message sur WhatsApp (' + mer.phone + ') : « Nouvelle commande de ' + plural(nArticles(order), 'article', 'articles') + ', ' + fcfa(order.sub) + ' déjà payés. Ouvrez Kasuwa pour l’accepter. »',
+        { a: 'goMerchant', v: String(mer.id), l: 'Ouvrir l’espace commerçante' });
+    }
+    else if (a === 'mtab') { S.mTab = v; S.err = ''; S.sub.pending = false; top = true; }
+    else if (a === 'plan') { S.sub.plan = v; }
+    else if (a === 'subop') { S.sub.op = v; }
+    else if (a === 'subpay') { S.sub.pending = true; top = true; }
+    else if (a === 'subcancel') { S.sub.pending = false; top = true; }
+    else if (a === 'subconfirm') {
+      var sm = M(S.mid), sp = PLANS[S.sub.plan];
+      var left = isActive(sm) ? sm.sub.days : 0;
+      sm.sub = { plan: S.sub.plan, days: left + sp.days };
+      S.sub.pending = false; top = true;
+      toast('Abonnement activé', 'Votre boutique est visible dans la recherche jusqu’au ' + endText(sm.sub.days) + '.');
+    }
+    else if (a === 'subend') {
+      M(S.mid).sub = { plan: 'expired', days: 0 };
+      toast('Abonnement terminé', 'Votre boutique n’apparaît plus dans la recherche des clients. Vos produits sont conservés.', { a: 'role', v: 'client', l: 'Vérifier côté client' });
+    }
+    else if (a === 'mstat') { setStatus(o, v); }
+    else if (a === 'toggle') { var pr = M(S.mid).products.find(function (x) { return x.id === p; }); if (pr) pr.on = !pr.on; }
+    else if (a === 'cancelM') { S.creating = false; S.err = ''; }
+    else if (a === 'createM') {
+      var nm = S.newM;
+      if (!nm.name.trim()) S.err = 'Donnez un nom à votre boutique.';
+      else if (!nm.quartier.trim()) S.err = 'Indiquez votre quartier.';
+      else if (!validPhone(nm.phone)) S.err = 'Le numéro WhatsApp doit avoir 8 chiffres.';
+      else {
+        var nmr = { id: nextM++, name: nm.name.trim(), quartier: nm.quartier.trim(), phone: nm.phone.trim(), rating: 'Nouvelle', orders: 0, products: [], sub: { plan: 'trial', days: 30 } };
+        merchants.push(nmr);
+        S.mid = nmr.id; S.creating = false; S.mTab = 'products'; S.err = '';
+        S.newM = { name: '', quartier: '', phone: '' };
+        toast('Compte créé', 'Votre essai gratuit de 30 jours commence. Ajoutez votre premier produit pour apparaître dans la recherche des clients.');
+      }
+    }
+    else if (a === 'addP') {
+      var np = S.newP, price = parseInt(String(np.price).replace(/\D/g, ''), 10);
+      if (!np.name.trim()) S.err = 'Donnez un nom au produit.';
+      else if (!price || price < 100) S.err = 'Indiquez un prix en FCFA, par exemple 4500.';
+      else {
+        M(S.mid).products.push(mk(np.name.trim(), price, np.cat));
+        S.newP = { name: '', price: '', cat: np.cat }; S.err = '';
+        toast('Produit ajouté', 'Il apparaît maintenant dans les recherches des clients.');
+      }
+    }
+    else if (a === 'dtab') { S.dtab = v; S.dsub.pending = false; top = true; }
+    else if (a === 'dplan') { S.dsub.plan = v; }
+    else if (a === 'dsubop') { S.dsub.op = v; }
+    else if (a === 'dsubpay') { S.dsub.pending = true; top = true; }
+    else if (a === 'dsubcancel') { S.dsub.pending = false; top = true; }
+    else if (a === 'dsubconfirm') {
+      var dp = DPLANS[S.dsub.plan], dleft = isActive(driver) ? driver.sub.days : 0;
+      driver.sub = { plan: S.dsub.plan, days: dleft + dp.days };
+      S.dsub.pending = false; top = true;
+      toast('Abonnement activé', 'Vous recevez les nouvelles livraisons jusqu’au ' + endText(driver.sub.days) + '.');
+    }
+    else if (a === 'dsubend') {
+      driver.sub = { plan: 'expired', days: 0 };
+      toast('Abonnement terminé', 'Vous ne recevez plus de nouvelles livraisons. Vos livraisons en cours restent à terminer.');
+    }
+    else if (a === 'dtake') {
+      if (!isActive(driver)) { S.dtab = 'sub'; top = true; } else { setStatus(o, 'assigned', DRIVER); }
+    }
+    else if (a === 'dpick') { setStatus(o, 'delivering'); }
+    else if (a === 'ddone') {
+      setStatus(o, 'delivered');
+      var od = S.orders.find(function (x) { return x.id === o; });
+      if (od) toast('Livraison terminée', 'Vous avez encaissé ' + fcfa(od.fee) + ' ' + delLabel(od) + ' auprès de ' + od.cust.name + '.');
+    }
+    else return;
+
+    render(top);
+  });
+
+  document.addEventListener('input', function (e) {
+    var el = e.target, b = el.getAttribute && el.getAttribute('data-bind');
+    if (!b) return;
+    if (b === 'q') { S.query = el.value; $('#results').innerHTML = results(); return; }
+    if (b === 'msel') {
+      S.sub.pending = false;
+      if (el.value === 'new') { S.creating = true; } else { S.creating = false; S.mid = +el.value; }
+      S.err = '';
+      render(true);
+      return;
+    }
+    var parts = b.split('.');
+    var target = { f: S.form, nm: S.newM, np: S.newP }[parts[0]];
+    if (target) target[parts[1]] = el.value;
+  });
+
+  render(true);
+})();
+</script>
+
+</body></html>
